@@ -78,6 +78,10 @@
   
   # body
   body <- dashboardBody(
+    tags$noscript(HTML(
+      '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT3JW8MT"
+       height="0" width="0" style="display:none;visibility:hidden"></iframe>'
+    )),
     tag("style", HTML("
                       .right-side {
                       background-color: #dbf0ee;
