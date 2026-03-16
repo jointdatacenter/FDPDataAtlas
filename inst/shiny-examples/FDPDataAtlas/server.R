@@ -20,6 +20,7 @@ library(shinydashboard)
 library(shinyWidgets)
 library(shinyBS)
 library(RColorBrewer)
+library(shinyjs)
 
 if (webshot::is_phantomjs_installed() == FALSE) {
  webshot::install_phantomjs()
@@ -53,11 +54,34 @@ get_cols_for_plot <- function(df) {
   
 }
 
-# general config 
+push_virtual_page_view <- function(load_type, page_path, page_title) {
+  js <- sprintf(
+    "dataLayer.push({
+      'event': 'virtual_page_view',
+      'load_type': '%s',
+      'page_path': '/%s',
+      'pageTitle': '%s',
+      'hostname': window.location.hostname,
+      'content_language': 'EN'
+    });",
+    load_type, page_path, page_title
+  )
+  shinyjs::runjs(js)
+}
+
+# general config
 start_text <- read_file("www/AboutEvi.html")
 max_file_size_mb <- 100
 options(shiny.maxRequestSize = max_file_size_mb * 1024 ^ 2)
 shinyServer(function(input, output, session) {
+  session$onFlushed(function() {
+    push_virtual_page_view("full-page-load", "home", "FDP Data Atlas - home")
+  }, once = TRUE)
+
+  observeEvent(input$main_sidebar, {
+    push_virtual_page_view("spa-page-load", input$main_sidebar, paste("FDP Data Atlas -", input$main_sidebar))
+  }, ignoreInit = TRUE)
+
  data_internal <- reactiveValues(raw = NULL,
                                  cols = NULL,
                                  short_cols = NULL)
@@ -378,7 +402,6 @@ sys_map <- function(studies_data) {
    output$map <- renderLeaflet({
      gen_map()  %>%
        addProviderTiles(providers$Esri.WorldTerrain) 
-     # #leaflet::addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/gsdpm/civtteddj000z2jodf6dv7vw4/tiles/256/{z}/{x}}/{y}@2x?access_token=pk.eyJ1IjoiZ3NkcG0iLCJhIjoiY2toZjFvZ3gwMG1qODJ4cnpwaDdvenpzMiJ9.01pv2kccL9cXhxO6B-Naiw") %>%
    })
    
    leafletProxy("map", data = data_active()) %>%

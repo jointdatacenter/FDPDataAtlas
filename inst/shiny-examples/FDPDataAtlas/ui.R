@@ -18,6 +18,7 @@
   library(shinyBS)
   library(RColorBrewer)
   library(FDPDataAtlas)
+  library(shinyjs)
   
   if (webshot::is_phantomjs_installed() == FALSE) {
     webshot::install_phantomjs()
@@ -78,6 +79,7 @@
   
   # body
   body <- dashboardBody(
+    useShinyjs(),
     tags$noscript(HTML(
       '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT3JW8MT"
        height="0" width="0" style="display:none;visibility:hidden"></iframe>'
