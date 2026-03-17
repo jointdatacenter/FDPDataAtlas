@@ -24,7 +24,7 @@
     webshot::install_phantomjs()
   }
   
-  easyprint_js_file <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"
+  easyprint_js_file <- "https://cdn.jsdelivr.net/gh/rowanwins/leaflet-easyPrint@gh-pages/dist/bundle.js"
   
   # sidebar
   sidebar <- dashboardSidebar(
