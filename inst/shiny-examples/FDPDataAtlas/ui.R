@@ -20,10 +20,6 @@
   library(FDPDataAtlas)
   library(shinyjs)
   
-  if (webshot::is_phantomjs_installed() == FALSE) {
-    webshot::install_phantomjs()
-  }
-  
   easyprint_js_file <- "https://cdn.jsdelivr.net/gh/rowanwins/leaflet-easyPrint@gh-pages/dist/bundle.js"
   
   # sidebar
@@ -100,6 +96,19 @@
                       }
                       .skin-blue .main-header .sidebar-toggle {
                       background-color: #0072BC;
+                      }
+                      @media (min-width: 768px) {
+                      .main-header {
+                      display: flex;
+                      flex-direction: row-reverse;
+                      }
+                      .main-header .logo {
+                      flex: 1 1 auto;
+                      }
+                      .main-header .navbar {
+                      margin-left: 0 !important;
+                      flex: 0 0 auto;
+                      }
                       }
                       ")),
     tabItems(
