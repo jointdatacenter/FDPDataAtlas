@@ -1,0 +1,6 @@
+id,idno,title,country,year,catalog_created,decision,detail_in_collector,topic_tags,url
+1560,UNHCR_ALB_2024_LIS_v2.1,"Livelihoods Programme Monitoring Beneficiary Survey, 2024",Albania,2024,2026-07-28,excluded: Albania is not in wb_bounds.csv,no,,https://microdata.unhcr.org/index.php/catalog/1560
+1561,UNHCR_BDI_2024_LIS_v2.1,"Livelihoods Programme Monitoring Beneficiary Survey, 2024",Burundi,2024,2026-07-28,added to metadata.csv only: project-specific,no,NA: no notes in collector,https://microdata.unhcr.org/index.php/catalog/1561
+1562,UNHCR_SYR_2024_LIS_v2.1,"Livelihoods Programme Monitoring Beneficiary Survey, 2024",Syrian Arab Republic,2024,2026-07-28,added to metadata.csv only: project-specific,no,NA: no notes in collector,https://microdata.unhcr.org/index.php/catalog/1562
+1563,UNHCR_ROU_2024_LIS_v2.1,"Livelihoods Programme Monitoring Beneficiary Survey, 2024",Romania,2024,2026-07-28,excluded: Romania is not in wb_bounds.csv,no,,https://microdata.unhcr.org/index.php/catalog/1563
+1581,UNHCR_COG_2025_SENS,"Standardised Expanded Nutrition Survey (SENS), Republic of the Congo  - 2025",Congo,2024,2026-10-19,added to metadata.csv and metadata_v2.csv,no,NA: no notes in collector,https://microdata.unhcr.org/index.php/catalog/1581
