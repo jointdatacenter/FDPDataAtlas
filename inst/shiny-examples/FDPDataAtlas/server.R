@@ -25,6 +25,7 @@ library(shinyjs)
 # functions
 source("gendescplot.R")
 source("genheatmap.R")
+source("basemap.R")
 
 get_cols_for_plot <- function(df) {
   list_cols <- colnames(df %>%
@@ -295,8 +296,25 @@ sys_map <- function(studies_data) {
  
  # Refugee statistics
  ref_data_filtered <- reactive({
+   req(input$selected_variable)
    FDPDataAtlas::ref_data %>%
      filter(indicator == input$selected_variable)
+ })
+
+ basemap_data <- reactive({
+   align_basemap_data(FDPDataAtlas::bounds, ref_data_filtered())
+ })
+
+ output$basemap_status <- renderText({
+   if (!any(is.finite(basemap_data()$value))) {
+     "No data available for this indicator in the mapped countries."
+   } else {
+     ""
+   }
+ })
+
+ output$map <- renderLeaflet({
+   gen_map()
  })
  
  
@@ -315,15 +333,19 @@ sys_map <- function(studies_data) {
 
 # Color schema
    # basemap
-   breaks <- quantile(ref_data_filtered()$value,
-                      probs = seq(0, 1, 0.25),
-                      na.rm = TRUE)
-   breaks <- rev(breaks)
+   map_data <- basemap_data()
+   breaks <- basemap_breaks(map_data$value)
+   has_values <- length(breaks) > 0L
+   no_data_color <- "#bdbdbd"
    
    navy_colors <-
      c("#f1eef6", "#bdc9e1", "#74a9cf", "#2b8cbe", "#045a8d")
-   pal <-
-     colorBin(navy_colors, domain = ref_data_filtered()$value, bins = breaks)
+   pal <- if (has_values) {
+     colorBin(navy_colors, domain = map_data$value, bins = breaks,
+              na.color = no_data_color)
+   } else {
+     function(x) rep(no_data_color, length(x))
+   }
    
    # surveys
    custom_pal <- colorRampPalette(c("#edf8e9", "#006d2c"))
@@ -399,32 +421,37 @@ sys_map <- function(studies_data) {
      }
    })
    
-   # map
-   output$map <- renderLeaflet({
-     gen_map()  %>%
-       addProviderTiles(providers$Esri.WorldTerrain) 
-   })
-   
-   leafletProxy("map", data = data_active()) %>%
+   # Update the existing map and replace the previous indicator's layers.
+   map_proxy <- leafletProxy("map", data = data_active()) %>%
      leaflet::clearMarkers() %>%
+     leaflet::clearShapes() %>%
+     leaflet::removeControl("ref_data") %>%
      leaflet::addPolygons(
-       data = FDPDataAtlas::bounds,
+       data = map_data,
        layerId = ~ ISO_A3,
-       fillColor = ~ pal(ref_data_filtered()$value),
+       fillColor = ~ pal(value),
        color = "white",
        dashArray = "3",
        weight = 1,
        fillOpacity = 0.7,
-       label = FDPDataAtlas::bounds$NAME_EN
-     ) %>%
-     leaflet::addLegend(
-       pal = pal,
-       values = ~ ref_data_filtered()$value,
-       opacity = 0.7,
-       position = "bottomright",
-       title = "Basemap",
-       layerId = "ref_data",
-     ) %>%
+       label = ~ NAME_EN
+     )
+
+   if (has_values) {
+     map_proxy <- leaflet::addLegend(
+       map_proxy, pal = pal, values = map_data$value,
+       na.label = "No data", opacity = 0.7, position = "bottomright",
+       title = "Basemap", layerId = "ref_data"
+     )
+   } else {
+     map_proxy <- leaflet::addLegend(
+       map_proxy, colors = no_data_color, labels = "No data available",
+       opacity = 0.7, position = "bottomright", title = "Basemap",
+       layerId = "ref_data"
+     )
+   }
+
+   map_proxy %>%
      leaflet::addCircleMarkers(
        lat = ~ lat_plotted,
        lng = ~ lng_plotted,
