@@ -97,17 +97,25 @@
                       .skin-blue .main-header .sidebar-toggle {
                       background-color: #0072BC;
                       }
-                      @media (min-width: 768px) {
                       .main-header {
                       display: flex;
                       flex-direction: row-reverse;
                       }
                       .main-header .logo {
                       flex: 1 1 auto;
+                      width: auto;
+                      min-width: 0;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
                       }
                       .main-header .navbar {
                       margin-left: 0 !important;
                       flex: 0 0 auto;
+                      width: auto;
+                      }
+                      @media (max-width: 767px) {
+                      .main-sidebar {
+                      padding-top: 50px;
                       }
                       }
                       ")),
