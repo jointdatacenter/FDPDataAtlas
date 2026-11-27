@@ -22,10 +22,6 @@ library(shinyBS)
 library(RColorBrewer)
 library(shinyjs)
 
-if (webshot::is_phantomjs_installed() == FALSE) {
- webshot::install_phantomjs()
-}
-
 # functions
 source("gendescplot.R")
 source("genheatmap.R")
@@ -33,7 +29,7 @@ source("genheatmap.R")
 get_cols_for_plot <- function(df) {
   list_cols <- colnames(df %>%
                           dplyr::select_if(function(x)
-                            dplyr::n_distinct(x) < 45))
+                            dplyr::n_distinct(x) < 60))
   
   cols_to_remove <-
     c(
@@ -80,6 +76,11 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$main_sidebar, {
     push_virtual_page_view("spa-page-load", input$main_sidebar, paste("FDP Data Atlas -", input$main_sidebar))
+    # The tables are drawn while their tab is hidden, so their column widths
+    # are measured as zero; recalculate them once the tab is visible.
+    if (input$main_sidebar %in% c("data", "data-dictionary")) {
+      shinyjs::runjs("setTimeout(function() { $($.fn.dataTable.tables(true)).DataTable().columns.adjust(); }, 200);")
+    }
   }, ignoreInit = TRUE)
 
  data_internal <- reactiveValues(raw = NULL,

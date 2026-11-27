@@ -26,7 +26,9 @@ GenHeatMap = function(idata, selcols, axis_txt_lim = 60){
   # Convert ggplot object to plotly object and specify the tooltip
   interactive_plot <- ggplotly(heatmp, tooltip = "text")  # Use "text" because that's the aesthetic we specified for tooltip_text
   
-  interactive_plot <- interactive_plot %>% plotly::layout(paper_bgcolor='#ecf0f5', plot_bgcolor='#ecf0f5')
+  interactive_plot <- interactive_plot %>% plotly::layout(paper_bgcolor='#ecf0f5', plot_bgcolor='#ecf0f5',
+                                                          xaxis = list(automargin = TRUE, title = list(text = selcols[1], standoff = 10)),
+                                                          yaxis = list(automargin = TRUE, title = list(text = selcols[2], standoff = 10)))
   
   
 }
