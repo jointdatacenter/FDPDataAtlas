@@ -152,7 +152,8 @@
                 label = "Basemaps available",
                 choices = unique(FDPDataAtlas::ref_data$indicator),
                 selected = unique(FDPDataAtlas::ref_data$indicator)[1]
-              )
+              ),
+              tags$p(role = "status", textOutput("basemap_status", inline = TRUE))
             ),
             tags$style(type='text/css', '#country_info { max-height: 600px; overflow-y: auto; }'),
             uiOutput("country_info")), style = "padding-left: 0px;")
